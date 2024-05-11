@@ -1,5 +1,6 @@
 import pytest
 
+from data.payloads import PayloadNormal
 from endpoints.authorize import CreateToken
 from endpoints.meme import Meme
 
@@ -24,7 +25,7 @@ def meme_page():
 @pytest.fixture(scope="function")
 def create_meme_and_delete(new_token):
     meme_page = Meme()
-    meme_page.add_new_meme(new_token)
+    meme_page.add_new_meme(new_token, payload=PayloadNormal.payload)
     id_meme = meme_page.created_new_meme.json()['id']
     yield id_meme
     meme_page.delete_meme(new_token, id_meme)

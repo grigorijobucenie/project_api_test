@@ -6,13 +6,14 @@ from endpoints.base_endpoint import Endpoint
 
 class CreateToken(Endpoint):
     token = None
+    name = "name_for_tests"
 
     @allure.step('Получение нового токена')
-    def get_new_token(self, headers=None):
+    def get_new_token(self, headers=None, name=None):
         headers = headers if headers else self.headers
         self.response = requests.post(
             f'{self.url}/authorize',
-            json={"name": "name_for_tests"},
+            json={"name": name if name else self.name},
             headers=headers
         )
         self.json = self.response.json()

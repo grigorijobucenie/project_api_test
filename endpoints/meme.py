@@ -38,10 +38,8 @@ class Meme(Endpoint):
         assert fact_keys == expected_keys
 
     @allure.step("Создание нового мема")
-    def add_new_meme(self, token):
+    def add_new_meme(self, token, payload):
         expected_keys = {'id', 'info', "tags", 'text', 'updated_by', 'url'}
-        payload = {'info': {'colors': ['blue', 'white'], 'objects': ['picture', 'text']}, 'tags': ['mosquito', 'spray'],
-                   'text': 'Loll', 'updated_by': 'new_1_name', 'url': 'ftp://example2134.com'}
         self.created_new_meme = requests.post(f'{self.url}/meme', headers={'Authorization': f'{token}'}, json=payload)
         assert expected_keys == set(self.created_new_meme.json().keys())
 
@@ -59,3 +57,13 @@ class Meme(Endpoint):
     def delete_meme(self, token, id_meme):
         response = requests.delete(f'{self.url}/meme/{id_meme}', headers={'Authorization': f'{token}'})
         assert response.status_code == 200
+
+    @allure.step('Получение мема по ID')
+    def get_meme_by_id(self, token, id_meme):
+        response = requests.get(f'{self.url}/meme/{id_meme}', headers={'Authorization': f'{token}'})
+        assert response.status_code == 404
+
+    @allure.title("Создание мема с незаполненным полем Text")
+    def add_new_meme_with_empty_text(self, token, payload):
+        self.created_new_meme = requests.post(f'{self.url}/meme', headers={'Authorization': f'{token}'}, json=payload)
+        assert self.created_new_meme.status_code == 400
